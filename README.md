@@ -1,3 +1,18 @@
+MATRIMONIAL APP :-
+I have made this app using React-Native. It has various functionalities like:-
+   -> User Authentication and User Authorization using basic Signup and Login forms.
+   -> Home page - Using stack navigation, we can render different pages.
+   -> Edit/Create profile - With this you can change your avatar using ImagePicker, name, biodata using DocumentPicker etc. to update your profile.
+   -> See all users - It will display all people by fetching their respective data.
+   -> Top 5 matches - Using FlatList I have shown random five people who can be a good match.
+   -> View Matches - It will display the people you have liked and modal is used to display more details about a person.
+   -> Delete Matches - To delete a particular match. I have used AsyncStorage for storing and updating the data of the user.
+   -> About and Contact pages are also available for more details.
+
+Below is the link of my working Matrimonial App:-
+
+
+
 <<<<<<< HEAD
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
@@ -81,3 +96,4 @@ To learn more about React Native, take a look at the following resources:
 =======
 # matrimonial_app
 >>>>>>> d8fefa407d3722e5c175d0d10b066ded63b01e1c
+ 
