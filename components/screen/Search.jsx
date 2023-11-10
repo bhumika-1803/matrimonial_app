@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
   StyleSheet,
@@ -19,9 +20,9 @@ function Search(){
     const [matches,setMatches]=React.useState([])
     const [isloading,setIsLoading]=React.useState(true)
 
-    function handleMatchClick(item){
+    async function handleMatchClick(item){
       setMatches([...matches,item])
-      console.warn(`match click ${item.id}`)
+      // console.warn(`match click ${item.id}`)
       // console.log("*",matches)
     }
 
@@ -30,11 +31,21 @@ function Search(){
         setTopFive(search.slice(0,5))
         setResult(search)
         setIsLoading(false)
-
     }
+
+    async function handlestorage(){
+      // await AsyncStorage.removeItem("Matches")
+      await AsyncStorage.setItem("Matches",JSON.stringify(matches))
+    }
+
+    React.useEffect(()=>{
+      handlestorage()
+    },[matches])
+
     React.useEffect(()=>{
         getsearches()
     },[])
+
 
     function showSearches({item,s}){
         // console.warn("*",s)
@@ -73,7 +84,7 @@ function Search(){
         </View>
 
         <View>
-            <Text style={styles.txt}>TOP 5 PICKS FOR YOU!!</Text>
+            <Text style={styles.txt}>TOP 5 PICKS FOR YOU! Swipe right to see.</Text>
             <View style={styles.upperbox}>
                 <FlatList 
                 // inverted
@@ -85,7 +96,7 @@ function Search(){
                 />
             </View>
         </View>
-        <Text style={styles.txt}>ALL USERS FOR A QUICK MATCH!</Text>
+        <Text style={[styles.txt,{marginTop:10}]}>ALL USERS FOR A QUICK MATCH!</Text>
         <View style={styles.lowerbox}>
             <FlatList
                 numColumns={2}
@@ -116,7 +127,7 @@ const styles = StyleSheet.create({
     borderColor:"indianred",
     borderRadius:20,
     backgroundColor:"snow",
-    marginTop:10
+    marginVertical:10
   },
   icon:{
     width:50,
@@ -127,9 +138,9 @@ const styles = StyleSheet.create({
     color:"indianred",
     fontFamily:"monospace",
     fontSize:15,
-    marginTop:10,
+    // marginTop:10,
     marginLeft:10,
-    fontWeight:"bold"
+    fontWeight:"bold",
   },
   img:{
     // width:undefined,
@@ -190,13 +201,18 @@ const styles = StyleSheet.create({
     padding:2
   },
   upperbox:{
-    height:240,
+    height:250,
+    paddingVertical:10,
     paddingHorizontal:10,
-    // borderWidth:1,
+    borderWidth:0.1,
+    elevation:5
   },
   lowerbox:{
-    // width:"90%",
+    width:"80%",
     height:340,
+    paddingHorizontal:10,
+    // justifyContent:"center",
+    // alignItems:"center",
     // borderWidth:1,
   },
   lowerboxchild:{

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import {
   Image,
@@ -19,15 +20,16 @@ import {launchImageLibrary} from 'react-native-image-picker';
 function Createprofile({navigation,route}){
     const {myName}=route.params||" "
     const [age,setAge]=React.useState("")
-    const [gender,setGender]=React.useState("")
-    const [salary,setSalary]=React.useState("")
+    const [gender,setGender]=React.useState("Male")
+    const [salary,setSalary]=React.useState("10")
     const [occupation,setOccupation]=React.useState("")
-    const [place,setPlace]=React.useState("")
+    const [place,setPlace]=React.useState("Delhi")
     const [radio,setRadio]=React.useState("1")
     const salaries = ["Less than 5LPA", "[5-8]LPA", "[8-10]LPA", "[10-15]LPA","[15-20]LPA","[20-25]LPA","[25-30]LPA","[30-35]LPA","[35-40]LPA","More than 40LPA"]
     const places = [ "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttarakhand","Uttar Pradesh","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli","Daman and Diu","Delhi","Lakshadweep","Puducherry"]
     const [biodata,setBioData]=React.useState("")
     const [image,setImage]=React.useState("https://cdn-icons-png.flaticon.com/512/3541/3541871.png")
+    const [user,setUser]=React.useState({})
 
  const pickImage = () => {
     let options = {
@@ -74,15 +76,29 @@ function Createprofile({navigation,route}){
         setGender(selectedgender)
         setRadio(radiono)
     }
-    const createProfileHandler=()=>{
+
+    const createProfileHandler=async ()=>{
+      try{
         // console.warn(age,gender,salary,occupation,place)
-        Alert.alert("Profile edited successfully!!")
-        navigation.navigate("Profile",{myName,image,biodata})
+        let value=await AsyncStorage.getItem("User")
+        value=JSON.parse(value)
+        if(value!=null){
+          setUser({...value,age,gender,salary,occupation,place,image})
+          await AsyncStorage.setItem("User",JSON.stringify({...value,age,gender,salary,occupation,place,image}))
+          Alert.alert("Profile edited successfully!!")
+          navigation.navigate("Profile",{myName,image,biodata})
+          }
+      }
+      catch(err){
+        console.warn(err)
+      }
     }
+
     const handleGoBack=()=>{
         navigation.goBack()
         // navigation.navigate("Login")
     }
+
   return (
     <ScrollView>
       <View style={styles.body1}>
@@ -174,7 +190,7 @@ function Createprofile({navigation,route}){
               <View style={styles.buttonbox}>
                   <View style={styles.button}>
                       <TouchableOpacity onPress={()=>createProfileHandler()}>
-                          <Text style={styles.buttontxt}>View Profile!</Text>
+                          <Text style={styles.buttontxt}>Save Profile!</Text>
                       </TouchableOpacity>
                   </View>
 

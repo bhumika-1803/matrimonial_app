@@ -1,5 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
+  Alert,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -13,17 +16,42 @@ function Signup({navigation}){
   const [password,setPassword]=React.useState("")
   const [confirmpassword,setConfirmPassword]=React.useState("")
   const [phoneno,setPhoneNo]=React.useState("")
+  const [user,setUser]=React.useState({})
   const [check,isCheck]=React.useState(false)
 
+  async function handlestorage(user){
+    try{
+      // console.log(user)
+      await AsyncStorage.removeItem("User");
+      await AsyncStorage.removeItem("Matches")
+      await AsyncStorage.setItem("User",JSON.stringify(user));
+      // console.log(user)
+      navigation.navigate("Login")
+    }
+    catch(err){
+      console.warn(err)
+    }
+  }
+
   function submitHandler(){
-    navigation.navigate("Login")
-    // navigation.navigate("Fun")
-    // Alert.alert(username,password)
+    if(!username || !password || !confirmpassword || !phoneno){
+      console.warn("Enter all details please.")
+    }
+    else if(password!=confirmpassword){
+      console.warn("Password does not match!")
+    }
+    else{
+      setUser({
+        username,password,confirmpassword,phoneno
+      })
+      handlestorage(user)
+    }
   }
 
   return (
     <View style={styles.body}>
-        <Text style={styles.txt1}>Signup HERE!</Text>
+      <ScrollView>
+      <Text style={styles.txt1}>Signup HERE!</Text>
         <Text style={styles.txt2}>Contact us anytime at letsmarryy@gmail.com</Text>
         <View style={styles.ipbox}>
             <Text style={styles.iptext}>Enter Name</Text>
@@ -81,6 +109,7 @@ function Signup({navigation}){
           onPress={()=>submitHandler()}>
           <Text style={styles.txt4}>Login</Text>
         </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }

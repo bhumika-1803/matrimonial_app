@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -11,13 +13,43 @@ import CheckBox from 'react-native-check-box'
 function Login({navigation}){
   const [username,setUsername]=React.useState("")
   const [password,setPassword]=React.useState("")
+  const [user,setUser]=React.useState({})
   const [check,isCheck]=React.useState(false)
 
+  async function handlestorage(){
+    try{
+      let value = await AsyncStorage.getItem('User');
+      value=JSON.parse(value)
+      console.log(value)
+      if (value !== null) {
+            // console.warn(value)
+            setUser(value)
+            if(username!=value.username || password!=value.password){
+              console.warn(password,value.password)
+              // console.warn("Wrong Credentials!")
+            }
+            else{
+              navigation.navigate("Createprofile",{myName:`${username}`})
+            }
+      }
+      else{
+        Alert.alert("No user found in Database. Please signup first!")
+        navigation.navigate("Signup")
+        return
+      }
+    }
+    catch(err){
+      console.warn(err)
+    }
+  }
   function submitHandler(){
-    navigation.navigate("Createprofile",{myName:`${username}`})
-    // navigation.navigate("Profile",{myName:`${username}`})
-    // navigation.navigate("Fun")
-    // Alert.alert(username,password)
+    if(!username || !password){
+      console.warn("Enter all details please.")
+    }
+    else{
+      handlestorage(user)
+    // navigation.navigate("Createprofile",{myName:`${username}`})
+    }
   }
 
   return (
@@ -27,6 +59,7 @@ function Login({navigation}){
         <View style={styles.ipbox}>
             <Text style={styles.iptext}>Enter Name</Text>
             <TextInput style={styles.ip}
+            required
             autoCapitalize="none"
             autoCorrect={false}
             placeholder='Type name here..'

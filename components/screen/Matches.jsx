@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
   StyleSheet,
@@ -13,12 +14,13 @@ import {
 import { search } from '../db/search';
 
 function Matches({navigation,route}){
-  const {matches}=route.params||[]
+  // const {matches}=route.params||[]
   // console.warn(matches)
 
     const [data,setData]=React.useState("")
     const [isloading,setIsLoading]=React.useState(true)
     const [modalview,setModalView]=React.useState(false)
+    const [alertValue,setAlertValue]=React.useState(false)
     const [modalcontent,setModalContent]=React.useState({})
 
     function knowMoreHandler(item){
@@ -26,8 +28,24 @@ function Matches({navigation,route}){
       setModalContent(item)
       setModalView(true)
     }
-    function removeMatchHandler(item){
-      console.warn(`remove match ${item.id}`)
+
+    async function removeMatchHandler(item){
+      // console.warn(`remove match ${item.id}`)
+      Alert.alert(`Are your sure you want to remove ${item.name} from your match?`, `Remove BIODATA #${item.id}`, [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+        },
+        {text: 'OK', onPress: () => handlealert(item)},
+      ])
+    }
+
+    async function handlealert(item){
+      const new_result=data.filter((el,i)=>{
+        return el.id!=item.id
+      })
+      setData(new_result)
+      await AsyncStorage.setItem("Matches",JSON.stringify(new_result))
     }
 
     function renderMatches({item}){
@@ -74,23 +92,28 @@ function Matches({navigation,route}){
               </TouchableOpacity>
             </Modal>
         </View>
-        
-        // console.log(item)
       )
     }
     async function fetchdata(){
         try{
-        const url="https://bhumika-1803.github.io/data/data.json"
-        const res=await fetch(url)
-        const matches=await res.json()
-        setData(matches)
-        // setData(search)
+        // const url="https://bhumika-1803.github.io/data/data.json"
+        // const res=await fetch(url)
+        // const matches=await res.json()
+        // setData(matches)
+        let val=await AsyncStorage.getItem("Matches")
+        val=JSON.parse(val)
+        if(val!=null){
+          console.log(val)
+          setData(val)
+          // setMatches(val)
+        }
         setIsLoading(false)
         }
         catch(err){
             console.log(err)
         }
     }
+
     React.useEffect(()=>{
         fetchdata()
     },[])
@@ -128,7 +151,7 @@ function Matches({navigation,route}){
 
 const styles = StyleSheet.create({
   modal:{
-    backgroundColor:"rgba(0,0,0,0.25)",
+    backgroundColor:"rgba(0,0,0,0.6)",
     justifyContent:"center",
     height:"100%",
     alignItems:"center"

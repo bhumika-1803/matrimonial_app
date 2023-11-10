@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
   Button,
@@ -16,6 +17,7 @@ function Profile({navigation,route}){
     const {image}=route.params || "https://cdn-icons-png.flaticon.com/512/3541/3541871.png"
     const {biodata}=route.params || " "
     const [modalview,setModalView]=React.useState(false)
+    // const [image,setImage]=React.useState("https://cdn-icons-png.flaticon.com/512/3541/3541871.png")
     const [modalcontent,setModalContent]=React.useState(undefined)
 
     function handleModal(){
@@ -23,10 +25,21 @@ function Profile({navigation,route}){
       setModalView(true)
     }
 
-    const handlegoback=()=>{
-        navigation.navigate("Login")
+    const handlegoback= async()=>{
+        try {
+            await AsyncStorage.removeItem("User");
+            navigation.navigate("Login")
+        }
+        catch(err) {
+            console.warn(err)
+        }
     }
-    const handleprofile=()=>{
+
+    const handleprofile=async ()=>{
+      let value=await AsyncStorage.getItem("User")
+      // value=JSON.parse(value)
+      // console.log(value)
+      // setImage(value.image)
       navigation.navigate("Createprofile")
   }
 
@@ -108,7 +121,9 @@ const styles = StyleSheet.create({
     textShadowRadius:3
   },
   txt3:{
-    fontSize:16,
+    fontSize:18,
+    textTransform:"capitalize",
+    color:"grey",
   }
 });
 

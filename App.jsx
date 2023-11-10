@@ -19,7 +19,7 @@ function App(){
   const Stack=createNativeStackNavigator()
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Profile">
         {/* another method to pass props */}
         <Stack.Screen name="Home"
         options={{
